@@ -1,0 +1,34 @@
+[local] 
+localhost ansible_connection=local 
+
+mkdir -p library
+
+           #!/usr/bin/python
+            from ansible.module_utils.basic import AnsibleModule
+           def walk():
+              module_args = dict(name=dict(type='str', required=True))
+              module = AnsibleModule(argument_spec=module_args)
+              result = {"changed": False, "message": f"Welcome, {module.params['name']}!"}
+              module.exit_json(**result)
+            if __name__ ==  '__main__':
+                walk()
+
+
+chmod +x library/firstmodule.py
+
+- - - 
+- name: Ansible with one module
+  hosts: localhost  
+  gather_facts: no
+  tasks:
+   - name: Welcome friends
+     firstmodule:
+        name: “Ansible”
+     register: result
+
+   - name: Show message
+     debug:
+        msg: “{{result.message}}”
+
+ansible-playbook -i hosts.ini secondpb.yml 
+
